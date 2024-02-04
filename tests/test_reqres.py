@@ -2,6 +2,8 @@ import json
 import requests
 from jsonschema import validate
 
+from utils.schemas_path import load_schema
+
 
 def test_get_user():
     first_name = "Lindsay"
@@ -41,8 +43,10 @@ def test_user_login_success():
     body = response.json()
 
     assert body["token"] == "QpwL5tke4Pnpja7X4"
-    with open("schemas/user_login.json") as file:
-        validate(body, schema=json.loads(file.read()))
+    schema = load_schema("user_login.json")
+    with open(schema) as file:
+        schema = json.load(file)
+    validate(body, schema=schema)
 
 
 def test_create_user():
@@ -53,8 +57,12 @@ def test_create_user():
     body = response.json()
 
     assert response.status_code == 201
-    with open("schemas/create_user.json") as file:
-        validate(body, schema=json.loads(file.read()))
+
+    schema = load_schema("create_user.json")
+    with open(schema) as file:
+        schema = json.load(file)
+    validate(body, schema=schema)
+
     assert body["name"] == name
     assert body["job"] == job
 
@@ -68,8 +76,10 @@ def test_user_list():
 
     assert response.json()["data"]["first_name"] == first_name
     assert response.status_code == 200
-    with open("schemas/list_users.json") as file:
-        validate(body, schema=json.loads(file.read()))
+    schema = load_schema("list_users.json")
+    with open(schema) as file:
+        schema = json.load(file)
+    validate(body, schema=schema)
     assert body["data"]["last_name"] == last_name
 
 
@@ -82,8 +92,11 @@ def test_user_update():
 
     assert response.json()["name"] == name
     assert response.status_code == 200
-    with open("schemas/update_user.json") as file:
-        validate(body, schema=json.loads(file.read()))
+
+    schema = load_schema("update_user.json")
+    with open(schema) as file:
+        schema = json.load(file)
+    validate(body, schema=schema)
     assert body["job"] == job
 
 
@@ -97,3 +110,7 @@ def test_user_login_not_success():
     response = requests.post("https://reqres.in/api/login", data={"email": "peter@klaven"})
 
     assert response.status_code == 400
+
+#
+# def path(file_name):
+#     return os.path.join(os.path.dirname(__file__), file_name)
