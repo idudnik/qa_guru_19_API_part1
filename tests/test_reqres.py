@@ -111,6 +111,3 @@ def test_user_login_not_success():
 
     assert response.status_code == 400
 
-#
-# def path(file_name):
-#     return os.path.join(os.path.dirname(__file__), file_name)
